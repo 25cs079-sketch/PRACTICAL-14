@@ -1,0 +1,196 @@
+<?php
+require_once "config.php";
+
+$menuResult = $conn->query("
+    SELECT id, title, link, min_role
+    FROM menu_items
+    ORDER BY id ASC
+");
+
+$menuItems = [];
+
+while ($row = $menuResult->fetch_assoc()) {
+    $menuItems[] = $row;
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            Admin Dashboard
+        </div>
+        <nav id="navigation">
+            <?php foreach ($menuItems as $menu): ?>
+                <a
+                    href="<?= htmlspecialchars($menu['link']) ?>"
+                    class="menu-item"
+                    data-role="<?= htmlspecialchars($menu['min_role']) ?>"
+                >
+                    <?= htmlspecialchars($menu['title']) ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
+    </aside>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p>Manage your inventory</p>
+            </div>
+            <div class="role-selector">
+                <label for="role">Role:</label>
+                <select id="role">
+                    <option value="user">User</option>
+                    <option value="editor">Editor</option>
+                    <option value="admin" selected>Admin</option>
+                </select>
+            </div>
+        </header>
+        <!-- Dashboard -->
+        <section id="dashboard" class="section">
+            <div class="cards">
+                <div class="card">
+                    <h3>Inventory</h3>
+                    <p id="totalItems">0</p>
+                </div>
+                <div class="card">
+                    <h3>Current Role</h3>
+                    <p id="currentRole">Admin</p>
+                </div>
+            </div>
+        </section>
+        <!-- Inventory Section -->
+        <section id="inventory" class="section">
+            <div class="section-header">
+                <h2>Add Item</h2>
+            </div>
+            <form id="itemForm">
+                <input
+                    type="hidden"
+                    id="itemId"
+                    name="id"
+                >
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">
+                            Name
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Enter item name"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+
+                        <label for="category">
+                            Category
+                        </label>
+                        <input
+                            type="text"
+                            id="category"
+                            name="category"
+                            placeholder="Enter category"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="price">
+                            Price
+                        </label>
+                        <input
+                            type="number"
+                            id="price"
+                            name="price"
+                            step="0.01"
+                            min="0"
+                            placeholder="0.00"
+                            required
+                        >
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="saveButton"
+                    >
+                        Save Item
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="cancelButton"
+                        style="display:none;"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+            <!-- Inventory List -->
+            <div class="section-header inventory-title">
+                <h2>Inventory List</h2>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTable">
+                        <tr>
+                            <td colspan="5" class="loading">
+                                Loading...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <!-- Content -->
+        <section id="content" class="section hidden">
+            <div class="placeholder">
+                <h2>Manage Content</h2>
+                <p>Editor content management area.</p>
+            </div>
+        </section>
+        <!-- Users -->
+        <section id="users" class="section hidden">
+            <div class="placeholder">
+                <h2>User Management</h2>
+                <p>Admin user management area.</p>
+            </div>
+        </section>
+        <!-- Settings -->
+        <section id="settings" class="section hidden">
+            <div class="placeholder">
+                <h2>System Settings</h2>
+                <p>Admin system settings area.</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
